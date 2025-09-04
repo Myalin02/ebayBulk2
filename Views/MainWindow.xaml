@@ -1,0 +1,97 @@
+<Window x:Class="EbayBulk_Generator.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EbayBulk_Generator.Views"
+        mc:Ignorable="d"
+        Title="eBay Bulk Generator" Height="700" Width="1100" MinWidth="900" MinHeight="600">
+    <DockPanel Background="#F7F9FB">
+        <!-- Ribbon/Menu -->
+        <Menu DockPanel.Dock="Top" Background="#2D3E50" Foreground="White" Height="36">
+            <MenuItem Header="Datei">
+                <MenuItem Header="Template laden..." Command="{Binding LoadTemplateCommand}" />
+                <MenuItem Header="Projekt speichern..." />
+                <MenuItem Header="Projekt öffnen..." />
+                <Separator/>
+                <MenuItem Header="eBay-CSV exportieren..." Command="{Binding ExportEbayCsvCommand}" />
+                <Separator/>
+                <MenuItem Header="Beenden" />
+            </MenuItem>
+            <MenuItem Header="Variationen">
+                <MenuItem Header="Importieren (CSV)..." />
+                <MenuItem Header="Generieren..." />
+                <MenuItem Header="Löschen" />
+                <MenuItem Header="Prüfen" />
+            </MenuItem>
+            <MenuItem Header="Einstellungen">
+                <MenuItem Header="Quantity-Default" />
+                <MenuItem Header="SKU-Regel" />
+                <MenuItem Header="Titel-Prefix/Suffix" />
+            </MenuItem>
+        </Menu>
+        <!-- Main Content -->
+        <TabControl Margin="16" Background="White">
+            <TabItem Header="Parent-Listing">
+                <Grid Margin="16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="Parent-Listing" FontSize="20" FontWeight="Bold" Margin="0,0,0,8"/>
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Width="300">
+                                <TextBlock Text="*Title"/>
+                                <TextBox MinWidth="200" Text="{Binding Parent.Title, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                            <StackPanel Width="200">
+                                <TextBlock Text="*Category"/>
+                                <TextBox MinWidth="120" Text="{Binding Parent.Category, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                            <StackPanel Width="120">
+                                <TextBlock Text="ConditionID"/>
+                                <TextBox MinWidth="80" Text="{Binding Parent.ConditionID, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Width="300">
+                                <TextBlock Text="RelationshipDetails (z.B. Modell;Farbe;Tasche)"/>
+                                <TextBox MinWidth="200" Text="{Binding Parent.RelationshipDetails, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Varianten">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBox Width="200" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" ToolTip="Suche nach Titel oder SKU"/>
+                        <Button Content="Filter"/>
+                        <Button Content="CSV importieren" Command="{Binding ImportVariationsCommand}"/>
+                        <Button Content="CSV exportieren" Command="{Binding ExportEbayCsvCommand}"/>
+                    </StackPanel>
+                    <DataGrid ItemsSource="{Binding FilteredVariations}" AutoGenerateColumns="False" CanUserAddRows="False" Margin="0,0,0,8" 
+                              RowBackground="#F7F9FB" AlternatingRowBackground="#E3EAF2" 
+                              GridLinesVisibility="None" HeadersVisibility="Column" 
+                              BorderThickness="0" FontSize="14" SelectionMode="Single" SelectionUnit="FullRow">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="SKU" Binding="{Binding CustomLabel, UpdateSourceTrigger=PropertyChanged}" Width="120"/>
+                            <DataGridTextColumn Header="Titel" Binding="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                            <DataGridTextColumn Header="Preis" Binding="{Binding StartPrice, UpdateSourceTrigger=PropertyChanged, StringFormat=F2}" Width="80"/>
+                            <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+                            <DataGridTextColumn Header="Attribute" Binding="{Binding Attributes, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+                            <DataGridTextColumn Header="PicURL" Binding="{Binding PicURL, UpdateSourceTrigger=PropertyChanged}" Width="150"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+        </TabControl>
+        <!-- Statusbar -->
+        <StatusBar DockPanel.Dock="Bottom" Background="#2D3E50" Foreground="White" Height="28">
+            <StatusBarItem>
+                <TextBlock Text="{Binding ValidationMessage}"/>
+            </StatusBarItem>
+        </StatusBar>
+    </DockPanel>
+</Window>
